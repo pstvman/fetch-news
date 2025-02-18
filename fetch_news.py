@@ -64,16 +64,21 @@ def daily_task():
     pprint(cleaned_data)
     # generate_report(cleaned_data)
     # 写入es
-    save_to_es(cleaned_data)
+    save_to_es(cleaned_data, "weibo_hits")
     # 可选：发送邮件（使用smtplib）
 
-# 5. 定时任务（每天6点执行）
-# schedule.every().day.at("06:00").do(daily_task)
-schedule.every().hour.do(daily_task)
+def main(): 
+    # 首次运行
+    daily_task()
 
-while True:
-    schedule.run_pending()
-    time.sleep(60)
-    
-# 单次运行测试
-# daily_task()
+    # 5. 定时任务（每天6点执行）
+    # schedule.every().day.at("06:00").do(daily_task)
+    # schedule.every().hour.do(daily_task)
+    schedule.every(15).minutes.do(daily_task)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
+
+if __name__ == "__main__":
+    main()
