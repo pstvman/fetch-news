@@ -19,13 +19,17 @@ else:
     print("连接失败，请检查配置。")
 
 def save_to_es(data_list):
-    print(data_list)
+    print("\n写入es前打印：", data_list, "\n")
     actions = []
-    for data in data_list['domestic']:
+    for data in data_list['weibo']:
         print(data)
         action = {
             "_index": "news_keywords",  # 索引名称
-            "_source": {"word": data}
+            "_source": {
+                "word": data["word"],
+                "hot_value": data["hot_value"],
+                "timestamp": data["timestamp"]
+            }
         }
         actions.append(action)
     print("actions:", actions)
