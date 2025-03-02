@@ -12,6 +12,7 @@ _ = load_dotenv(find_dotenv())
 CORPID = os.getenv('CORPID')          # 企业ID
 CORPSECRET = os.getenv('CORPSECRET')  # 应用Secret
 AGENTID = os.getenv('AGENTID')        # 应用AgentId
+USERID = os.getenv('USERID')          # 企业微信ID
 
 class AccessTokenManager:
     def __init__(self):
@@ -73,6 +74,52 @@ def get_access_token():
     """获取Access Token的包装函数"""
     return token_manager.get_access_token()
 
+def read_news_from_txt():
+    """从文本中读取"""
+
+def get_costomer_group_list():
+    # 1. 获取最新的Access Token
+    access_token = get_access_token()
+
+    # # 获取客户群列表
+    # url = f"https://qyapi.weixin.qq.com/cgi-bin/externalcontact/groupchat/list?access_token={access_token}"
+    # data = {
+    #     "status_filter": 0,
+    #     "owner_filter": {
+    #         "userid_list": ["abel"]
+    #     },
+    #     "cursor" : "",
+    #     "limit" : 10
+    # }
+    # headers = {"Content-Type": "application/json"}
+    # response = requests.post(url, data=json.dumps(data), headers=headers)
+
+    # print(response.json().get("errcode"))
+    # print(response.json().get("errmsg"))
+
+
+def get_costomer_list():
+    """获取客户(外部联系人)列表"""
+    access_token = get_access_token()
+
+    url = f"https://qyapi.weixin.qq.com/cgi-bin/externalcontact/list?access_token={access_token}&userid={USERID}]"
+    response = requests.get(url)
+    print(response.json().get("errcode"))
+    print(response.json().get("errmsg"))
+    print(response.json().get("external_userid"))
+
+
+def get_costomer_details(external_userid):
+    """获取客户（外部联系人）的详细信息"""
+    access_token = get_access_token()
+    external_userid = "wmEfySTwAAiQjB6hLRvmLYuJAcoJIIqw"
+    external_userid = "wmEfySTwAALrc3zMl2LPJQrLYaaM6APw"
+
+    url = f"https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get?access_token={access_token}&external_userid={external_userid}"
+
+    response = requests.get(url)
+    print(response.json().get("external_contact"))
+
 def send_news():
     """发送早新闻"""
     try:
@@ -80,11 +127,15 @@ def send_news():
         access_token = get_access_token()
         
         # 2. 调用你的资讯接口获取新闻内容
-        news = "今日早新闻：\n1. 新闻内容1\n2. 新闻内容2\n3. 新闻内容3"
+        news = """ 
+今日早资讯250302
+
+"""
         
         # 3. 发送消息（以文本消息为例）
         url = f"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}"
-        # url = f"https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_msg_template?access_token=ACCESS_TOKEN"
+        url = f"https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_msg_template?access_token={access_token}"
+        
         data = {
             "touser": "@all",  # 发送给所有人（或指定UserID）
             "msgtype": "text",
@@ -104,4 +155,6 @@ def send_news():
 
 # 执行发送
 if __name__ == "__main__":
-    send_news()
+    # send_news()
+    get_costomer_list()
+    # get_costomer_details("")
